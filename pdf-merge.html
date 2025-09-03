@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Merger - ToolKit</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+    :root{--primary:#4361ee;--secondary:#3a0ca3;--light:#f8f9fa;--dark:#212529;--success:#4cc9f0;--warning:#f72585;--gray:#6c757d;}
+    body{background:#f9fafb;color:var(--dark);min-height:100vh;padding:20px;}
+    .container{max-width:1000px;margin:0 auto;}
+    .tool-header{text-align:center;margin:30px 0;}
+    .tool-header h1{font-size:2.5rem;color:var(--primary);}
+    .tool-header p{color:var(--gray);}
+    .tool-container{background:#fff;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.1);overflow:hidden;margin-bottom:40px;}
+    .upload-area{padding:30px;text-align:center;border-bottom:1px solid #eee;}
+    .upload-btn{background:var(--primary);color:#fff;padding:12px 30px;border-radius:50px;font-weight:600;border:none;cursor:pointer;}
+    .upload-btn:hover{background:var(--secondary);}
+    .file-input{display:none;}
+    .file-list{padding:20px;}
+    .file-item{display:flex;align-items:center;padding:12px;background:var(--light);border-radius:8px;margin-bottom:10px;gap:15px;cursor:move;}
+    .file-number input{width:50px;text-align:center;font-weight:700;color:var(--secondary);}
+    .file-icon{font-size:1.6rem;color:var(--warning);}
+    .file-info{flex-grow:1;}
+    .file-name{font-weight:600;}
+    .file-size{color:var(--gray);font-size:.9rem;}
+    .file-actions{display:flex;gap:8px;}
+    .file-action-btn{background:none;border:none;color:var(--gray);cursor:pointer;font-size:1rem;}
+    .file-action-btn:hover{color:var(--primary);}
+    .action-buttons{padding:20px;display:flex;gap:15px;border-top:1px solid #eee;}
+    .action-btn{flex:1;padding:15px;border-radius:8px;font-weight:600;cursor:pointer;border:none;}
+    .merge-btn{background:var(--primary);color:#fff;}
+    .merge-btn:hover{background:var(--secondary);}
+    .clear-btn{background:#f8f9fa;color:var(--gray);border:1px solid #ddd;}
+    .clear-btn:hover{background:#e9ecef;}
+    .result-area{text-align:center;display:none;padding:20px;}
+    .result-area.visible{display:block;animation:fadeIn .5s;}
+    .success-icon{font-size:3rem;color:var(--success);}
+    .download-btn{background:var(--success);color:#fff;padding:10px 25px;border-radius:50px;font-weight:600;text-decoration:none;}
+    .download-btn:hover{background:#3aa5d3;}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="tool-header">
+      <h1><i class="fas fa-file-pdf"></i> PDF Merger</h1>
+      <p>Upload, reorder (drag, renumber, or buttons), then merge into a single document.</p>
+    </div>
+
+    <div class="tool-container">
+      <!-- Upload -->
+      <div class="upload-area">
+        <button class="upload-btn" id="uploadBtn">Select PDF Files</button>
+        <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple>
+      </div>
+
+      <!-- File list -->
+      <div class="file-list">
+        <h3>Selected Files</h3>
+        <div id="filesContainer"><p class="no-files">No files selected yet.</p></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-buttons">
+        <button class="action-btn merge-btn" id="mergeBtn" disabled><i class="fas fa-object-group"></i> Merge PDFs</button>
+        <button class="action-btn clear-btn" id="clearBtn"><i class="fas fa-trash"></i> Clear All</button>
+      </div>
+
+      <!-- Result -->
+      <div class="result-area" id="resultArea">
+        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+        <h3>PDFs Merged Successfully!</h3>
+        <br>
+        <a href="#" class="download-btn" id="downloadBtn"><i class="fas fa-download"></i> Download Merged PDF</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script>
+    const fileInput=document.getElementById('fileInput'),
+          uploadBtn=document.getElementById('uploadBtn'),
+          filesContainer=document.getElementById('filesContainer'),
+          mergeBtn=document.getElementById('mergeBtn'),
+          clearBtn=document.getElementById('clearBtn'),
+          resultArea=document.getElementById('resultArea'),
+          downloadBtn=document.getElementById('downloadBtn');
+    let files=[];
+
+    uploadBtn.onclick=()=>fileInput.click();
+    fileInput.onchange=e=>handleFiles(e.target.files);
+    clearBtn.onclick=()=>{files=[];fileInput.value='';renderFiles();mergeBtn.disabled=true;resultArea.classList.remove('visible');};
+
+    function handleFiles(list){
+      for(let f of list){if(f.type==='application/pdf')files.push(f);}
+      renderFiles();mergeBtn.disabled=files.length<2;
+    }
+
+    function renderFiles(){
+      filesContainer.innerHTML='';
+      if(!files.length){filesContainer.innerHTML='<p class="no-files">No files selected yet.</p>';return;}
+      files.forEach((f,i)=>{
+        let div=document.createElement('div');
+        div.className='file-item';div.dataset.index=i;div.draggable=true;
+        div.innerHTML=`
+          <div class="file-number"><input type="number" value="${i+1}" min="1" max="${files.length}"></div>
+          <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+          <div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${(f.size/1024).toFixed(1)} KB</div></div>
+          <div class="file-actions">
+            <button class="file-action-btn move-up"><i class="fas fa-arrow-up"></i></button>
+            <button class="file-action-btn move-down"><i class="fas fa-arrow-down"></i></button>
+            <button class="file-action-btn remove-file"><i class="fas fa-times"></i></button>
+          </div>`;
+        filesContainer.appendChild(div);
+
+        // renumber input
+        div.querySelector("input").onchange=(e)=>{
+          let newPos=parseInt(e.target.value)-1;
+          if(newPos>=0 && newPos<files.length){
+            const [moved]=files.splice(i,1);
+            files.splice(newPos,0,moved);
+            renderFiles();
+          }
+        };
+
+        // drag events
+        div.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",i);});
+        div.addEventListener("dragover",e=>e.preventDefault());
+        div.addEventListener("drop",e=>{
+          e.preventDefault();
+          let from=parseInt(e.dataTransfer.getData("text/plain"));
+          let to=i;
+          const [moved]=files.splice(from,1);
+          files.splice(to,0,moved);
+          renderFiles();
+        });
+      });
+
+      filesContainer.querySelectorAll('.remove-file').forEach(btn=>
+        btn.onclick=e=>{files.splice(e.target.closest('.file-item').dataset.index,1);renderFiles();}
+      );
+      filesContainer.querySelectorAll('.move-up').forEach(btn=>
+        btn.onclick=e=>{let i=parseInt(e.target.closest('.file-item').dataset.index);if(i>0)[files[i],files[i-1]]=[files[i-1],files[i]];renderFiles();}
+      );
+      filesContainer.querySelectorAll('.move-down').forEach(btn=>
+        btn.onclick=e=>{let i=parseInt(e.target.closest('.file-item').dataset.index);if(i<files.length-1)[files[i],files[i+1]]=[files[i+1],files[i]];renderFiles();}
+      );
+
+      mergeBtn.disabled=files.length<2;
+    }
+
+    mergeBtn.onclick=async()=>{
+      mergeBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Merging...';mergeBtn.disabled=true;
+      const merged=await PDFLib.PDFDocument.create();
+      for(let f of files){
+        const pdf=await PDFLib.PDFDocument.load(await f.arrayBuffer());
+        const pages=await merged.copyPages(pdf,pdf.getPageIndices());
+        pages.forEach(p=>merged.addPage(p));
+      }
+      const bytes=await merged.save();
+      const blob=new Blob([bytes],{type:"application/pdf"});
+      const url=URL.createObjectURL(blob);
+      downloadBtn.href=url;downloadBtn.download="merged.pdf";
+      resultArea.classList.add('visible');
+      mergeBtn.innerHTML='<i class="fas fa-object-group"></i> Merge PDFs';mergeBtn.disabled=false;
+    }
+  </script>
+</body>
+</html>
