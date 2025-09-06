@@ -8,12 +8,12 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
     :root{--primary:#4361ee;--secondary:#3a0ca3;--light:#f8f9fa;--dark:#212529;--success:#4cc9f0;--warning:#f72585;--gray:#6c757d;}
-    body{background:#f9fafb;color:var(--dark);min-height:100vh;padding:20px;}
+    body{background:#f9fafb;color:var(--dark);min-height:100vh;padding:20px;position:relative;}
     .container{max-width:1000px;margin:0 auto;}
     .tool-header{text-align:center;margin:30px 0;}
     .tool-header h1{font-size:2.5rem;color:var(--primary);}
     .tool-header p{color:var(--gray);}
-    .tool-container{background:#fff;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.1);overflow:hidden;margin-bottom:40px;}
+    .tool-container{background:#fff;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.1);overflow:hidden;margin-bottom:40px;position:relative;}
     .upload-area{padding:30px;text-align:center;border-bottom:1px solid #eee;}
     .upload-btn{background:var(--primary);color:#fff;padding:12px 30px;border-radius:50px;font-weight:600;border:none;cursor:pointer;}
     .upload-btn:hover{background:var(--secondary);}
@@ -40,9 +40,59 @@
     .download-btn{background:var(--success);color:#fff;padding:10px 25px;border-radius:50px;font-weight:600;text-decoration:none;}
     .download-btn:hover{background:#3aa5d3;}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* Ads Styling */
+    .top-ad, .bottom-ad{width:100%;margin:20px 0;text-align:center;}
+    .side-ad{position:fixed;top:150px;width:160px;z-index:9999;}
+    .left-ad{left:0;}
+    .right-ad{right:0;}
+    @media(max-width:992px){.side-ad{display:none;}}
   </style>
 </head>
 <body>
+
+  <!-- Top Banner Ad -->
+  <div class="top-ad">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'e34b5ecf5c5146a6f7fe687796b561ed',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/e34b5ecf5c5146a6f7fe687796b561ed/invoke.js"></script>
+  </div>
+
+  <!-- Left Sidebar Ad -->
+  <div class="side-ad left-ad">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'a63f42cee1dd5f06ac01782d8ef9bfc7',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/a63f42cee1dd5f06ac01782d8ef9bfc7/invoke.js"></script>
+  </div>
+
+  <!-- Right Sidebar Ad -->
+  <div class="side-ad right-ad">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : '037592c53a0ff04c897e19d8cee256a7',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/037592c53a0ff04c897e19d8cee256a7/invoke.js"></script>
+  </div>
+
   <div class="container">
     <div class="tool-header">
       <h1><i class="fas fa-file-pdf"></i> PDF Merger</h1>
@@ -76,6 +126,20 @@
         <a href="#" class="download-btn" id="downloadBtn"><i class="fas fa-download"></i> Download Merged PDF</a>
       </div>
     </div>
+  </div>
+
+  <!-- Bottom Banner Ad -->
+  <div class="bottom-ad">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'e34b5ecf5c5146a6f7fe687796b561ed',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/e34b5ecf5c5146a6f7fe687796b561ed/invoke.js"></script>
   </div>
 
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
@@ -115,7 +179,6 @@
           </div>`;
         filesContainer.appendChild(div);
 
-        // renumber input
         div.querySelector("input").onchange=(e)=>{
           let newPos=parseInt(e.target.value)-1;
           if(newPos>=0 && newPos<files.length){
@@ -125,7 +188,6 @@
           }
         };
 
-        // drag events
         div.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",i);});
         div.addEventListener("dragover",e=>e.preventDefault());
         div.addEventListener("drop",e=>{
