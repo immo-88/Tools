@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:ror="http://rorweb.com/0.1/" >
+<channel>
+  <title>ROR Sitemap for https://immo-88.github.io/Tools/</title>
+  <link>https://immo-88.github.io/Tools/</link>
+
+<item>
+     <link>https://immo-88.github.io/Tools/</link>
+     <title>ToolKit - All-in-One Online Tools</title>
+     <description>ToolKit - All-in-One Online Tools</description>
+     <ror:updatePeriod></ror:updatePeriod>
+     <ror:sortOrder>0</ror:sortOrder>
+     <ror:resourceOf>sitemap</ror:resourceOf>
+</item>
+<item>
+     <link>https://immo-88.github.io/Tools/img-compress.html</link>
+     <title>ImageCompress - Optimize Your Images Online</title>
+     <description>Free online tool to compress your images while maintaining quality. Reduce file size for faster websites and social media.</description>
+     <ror:updatePeriod></ror:updatePeriod>
+     <ror:sortOrder>1</ror:sortOrder>
+     <ror:resourceOf>sitemap</ror:resourceOf>
+</item>
+<item>
+     <link>https://immo-88.github.io/Tools/pdf-merge.html</link>
+     <title>PDF Merger - ToolKit</title>
+     <description>PDF Merger - ToolKit</description>
+     <ror:updatePeriod></ror:updatePeriod>
+     <ror:sortOrder>1</ror:sortOrder>
+     <ror:resourceOf>sitemap</ror:resourceOf>
+</item>
+<item>
+     <link>https://immo-88.github.io/Tools/img-converter.html</link>
+     <title>Image Converter - ToolKit</title>
+     <description>Image Converter - ToolKit</description>
+     <ror:updatePeriod></ror:updatePeriod>
+     <ror:sortOrder>1</ror:sortOrder>
+     <ror:resourceOf>sitemap</ror:resourceOf>
+</item>
+</channel>
+</rss>
+  
